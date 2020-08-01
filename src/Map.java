@@ -95,7 +95,7 @@ public class Map {
 
     private OptimalSolution getOptimalCandidate(int index, int id, int i, int j) {
         int[] maxCoors = new int[2];
-        double max = 0;
+        double max = -1;
         Orientation maxOr = null;
         Shape s = getShape(id);
         for (Orientation orientation : s.orientations) {
