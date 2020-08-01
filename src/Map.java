@@ -49,7 +49,7 @@ public class Map {
                 sortedShapes.put(s.capacity, s);
             }
 
-            for(int j = 0; j < numUniqueShapes; j++) {
+            for(int j = numUniqueShapes; j >= 0; j--) {
                 data = scanner.nextLine().split(",");
                 for(Shape s: sortedShapes.values()) {
                     if(s.shape_id == Integer.parseInt(data[0])) {
