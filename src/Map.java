@@ -100,7 +100,7 @@ public class Map {
         for (Orientation orientation : s.orientations) {
             for (int[] coors : orientation.cells) {
                 if (fits(orientation, i, j, coors)) {
-                    double score = calcScore(s.shape_id, orientation, i, j, coors);
+                    double score = calcScore(index, orientation, i, j, coors);
                     if(max < score) {
                         max = score;
                         maxCoors = coors;
