@@ -43,7 +43,6 @@ public class Map {
             shapeID = new int[numUniqueShapes];
             available = new int[numUniqueShapes];
 
-
             for (int j = 0; j < numUniqueShapes; j++) {
                 data = scanner.nextLine().split(",");
                 shapeID[j] = Integer.parseInt(data[0]);
