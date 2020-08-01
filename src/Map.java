@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.sun.source.tree.Tree;
 import shapes.Orientation;
 import shapes.Shape;
 import shapes.Shapes;
@@ -7,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Scanner;
+import java.util.*;
 
 public class Map {
 
@@ -38,14 +39,31 @@ public class Map {
                     map[i][j] = 0;
                 }
             }
+
             shapeID = new int[numUniqueShapes];
             available = new int[numUniqueShapes];
 
-            for (int j = 0; j < numUniqueShapes; j++) {
+            TreeMap<Integer, Shape> sortedShapes = new TreeMap<Integer, Shape>();
+            for(Shape s : shapes.shapes) {
+                sortedShapes.put(s.capacity, s);
+            }
+
+            for(int j = 0; j < numUniqueShapes; j++) {
+                data = scanner.nextLine().split(",");
+                for(Shape s: sortedShapes.values()) {
+                    if(s.shape_id == Integer.parseInt(data[0])) {
+                        shapeID[j] = Integer.parseInt(data[0]);
+                        available[j] = Integer.parseInt(data[1]);
+                    }
+                }
+            }
+
+           /* for (int j = 0; j < numUniqueShapes; j++) {
                 data = scanner.nextLine().split(",");
                 shapeID[j] = Integer.parseInt(data[0]);
                 available[j] = Integer.parseInt(data[1]);
-            }
+            }*/
+
             String[] BlockedData = scanner.nextLine().split("\\|");
             for (int i = 0; i < numBlockedCells; i++) {
                 String[] temp = BlockedData[i].split(",");
