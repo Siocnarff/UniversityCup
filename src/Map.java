@@ -1,5 +1,12 @@
+import com.google.gson.Gson;
+import shapes.Orientation;
+import shapes.Shape;
+import shapes.Shapes;
+
 import java.io.File;
-import java.sql.SQLOutput;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Map {
@@ -11,8 +18,9 @@ public class Map {
     public int numBlockedCells;
     public int[] shapeID;
     public int[] available;
+    private Shapes shapes;
 
-    Map(String filename){
+    Map(String filename) {
         try {
             Scanner scanner = new Scanner(new File("./inputFiles/" + filename));
             String[] data = scanner.nextLine().split(",");
@@ -24,8 +32,8 @@ public class Map {
             numBlockedCells = Integer.parseInt(data[0]);
 
             map = new int[numRows][numCols];
-            for(int i = 0; i < numRows; i++){
-                for(int j = 0; j < numCols; j++){
+            for (int i = 0; i < numRows; i++) {
+                for (int j = 0; j < numCols; j++) {
                     map[i][j] = 0;
                 }
             }
@@ -38,7 +46,7 @@ public class Map {
                 available[j] = Integer.parseInt(data[1]);
             }
             String[] BlockedData = scanner.nextLine().split("\\|");
-            for(int i = 0; i < numBlockedCells; i++){
+            for (int i = 0; i < numBlockedCells; i++) {
                 String[] temp = BlockedData[i].split(",");
                 map[Integer.parseInt(temp[0])][Integer.parseInt(temp[1])] = -1;
             }
@@ -46,5 +54,68 @@ public class Map {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void getShapeDefs() throws IOException {
+        String json = new String(Files.readAllBytes(Paths.get("shapes_file.json")));
+        System.out.println(json);
+        System.out.println(json);
+        this.shapes = new Gson().fromJson(json, Shapes.class);
+    }
+
+    public void insertShapes() {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                if (map[i][i] != 0) {
+                    continue;
+                }
+                for (int id : shapeID) {
+                    if (available[id] != 0) {
+                        insertOptimally(id, i, j);
+                    }
+                }
+            }
+        }
+    }
+
+    private void insertOptimally(int id, int i, int j) {
+        Shape s = getShape(id);
+        for (Orientation orientation : s.orientations) {
+            for (int[] coors : orientation.cells) {
+                if (fits(orientation, i, j, coors)) {
+                    insertIntoMap(s.shape_id, orientation, i, j, coors);
+                }
+            }
+        }
+    }
+
+    private void insertIntoMap(int shape_id, Orientation orientation, int i, int j, int[] start) {
+        for (int[] coors : orientation.cells) {
+            map[i + coors[0] - start[0]][j + coors[1] - start[1]] = shape_id;
+        }
+    }
+
+    private boolean fits(Orientation orientation, int i, int j, int[] start) {
+        for (int[] coors : orientation.cells) {
+            if (i + coors[0] - start[0] < 0
+                    || i + coors[0] - start[0] >= numRows
+                    || j + coors[1] - start[1] >= numCols
+                    || j + coors[1] - start[1] < 0
+                    || map[i + coors[0] - start[0]][j + coors[1] - start[1]] != 0
+            ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    private Shape getShape(int id) {
+        for (Shape s : shapes.shapes) {
+            if (s.shape_id == id) {
+                return s;
+            }
+        }
+        return null;
     }
 }

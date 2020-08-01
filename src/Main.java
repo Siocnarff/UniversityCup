@@ -7,12 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
-        String json = new String(Files.readAllBytes(Paths.get("shapes_file.json")));
-        System.out.println(json);
-        System.out.println(json);
-        Shapes shapes = new Gson().fromJson(json, Shapes.class);
-        System.out.println(shapes.shapes[0].shape_id);
+    public static void main(String[] args) {
         Map map = new Map("grid_1.txt");
     }
 }
