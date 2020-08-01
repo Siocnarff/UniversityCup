@@ -22,6 +22,7 @@ public class Map {
 
     Map(String filename) {
         try {
+            getShapeDefs();
             Scanner scanner = new Scanner(new File("./inputFiles/" + filename));
             String[] data = scanner.nextLine().split(",");
             numRows = Integer.parseInt(data[0]);
@@ -50,7 +51,6 @@ public class Map {
                 String[] temp = BlockedData[i].split(",");
                 map[Integer.parseInt(temp[0])][Integer.parseInt(temp[1])] = -1;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,8 +58,6 @@ public class Map {
 
     private void getShapeDefs() throws IOException {
         String json = new String(Files.readAllBytes(Paths.get("shapes_file.json")));
-        System.out.println(json);
-        System.out.println(json);
         this.shapes = new Gson().fromJson(json, Shapes.class);
     }
 
@@ -69,9 +67,9 @@ public class Map {
                 if (map[i][i] != 0) {
                     continue;
                 }
-                for (int id : shapeID) {
-                    if (available[id] != 0) {
-                        insertOptimally(id, i, j);
+                for(int k = 0; k < shapeID.length; k++) {
+                    if (available[k] != 0) {
+                        insertOptimally(shapeID[k], i, j);
                     }
                 }
             }
