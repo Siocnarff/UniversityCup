@@ -69,25 +69,24 @@ public class Map {
     }
 
     public void insertShapes() {
-        OptimalSolution optimalSolution = new OptimalSolution();
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
+                OptimalSolution optimalSolution = new OptimalSolution();
                 if (map[i][i] != 0) {
                     continue;
                 }
                 for(int k = 0; k < shapeID.length; k++) {
                     if (available[k] != 0) {
                         OptimalSolution candidate = getOptimalCandidate(k, shapeID[k], i, j);
-                        if(candidate.score > optimalSolution.score) {
+                        if(candidate != null && candidate.score > optimalSolution.score) {
                                 optimalSolution = candidate;
                         }
                     }
                 }
-                if(optimalSolution.score == -1) {
-                    return;
+                if(optimalSolution.score != -1) {
+                    insertIntoMap(optimalSolution.id, optimalSolution.orientation, i, j, optimalSolution.coors);
+                    available[optimalSolution.index]--;
                 }
-                insertIntoMap(optimalSolution.id, optimalSolution.orientation, i, j, optimalSolution.coors);
-                available[optimalSolution.index]--;
             }
         }
     }
@@ -109,6 +108,9 @@ public class Map {
                     }
                 }
             }
+        }
+        if(max == -1) {
+            return null;
         }
         return new OptimalSolution(max, index, s.shape_id, maxOr, maxCoors);
         //insertIntoMap(s.shape_id, maxOr, i, j, maxCoors);
