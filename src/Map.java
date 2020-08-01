@@ -13,6 +13,7 @@ import java.util.*;
 
 public class Map {
 
+    public double[] numSides = {8,10,10,14,14,6,10,12,12,12,8,12,12,10,16,12,8,12,12,18,16,14,14,4,24};
     public int[][] map;
     public int numRows;
     public int numCols;
