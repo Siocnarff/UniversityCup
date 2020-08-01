@@ -5,6 +5,7 @@ import shapes.Shape;
 import shapes.Shapes;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,14 +21,17 @@ public class Map {
     public int[] shapeID;
     public int[] available;
     private Shapes shapes;
+    String outputName;
+    String fileOutput = "";
 
-    Map(String filename) {
+    Map(String filename, String outputName) {
+        this.outputName = outputName;
         try {
             getShapeDefs();
             Scanner scanner = new Scanner(new File("./inputFiles/" + filename));
             String[] data = scanner.nextLine().split(",");
             numRows = Integer.parseInt(data[0]);
-            numCols = Integer.parseInt(data[0]);
+            numCols = Integer.parseInt(data[1]);
             data = scanner.nextLine().split(",");
             numUniqueShapes = Integer.parseInt(data[0]);
             data = scanner.nextLine().split(",");
@@ -72,18 +76,19 @@ public class Map {
                 }
                 for(int k = 0; k < shapeID.length; k++) {
                     if (available[k] != 0) {
-                        insertOptimally(shapeID[k], i, j);
+                        insertOptimally(k, shapeID[k], i, j);
                     }
                 }
             }
         }
     }
 
-    private void insertOptimally(int id, int i, int j) {
+    private void insertOptimally(int index, int id, int i, int j) {
         Shape s = getShape(id);
         for (Orientation orientation : s.orientations) {
             for (int[] coors : orientation.cells) {
                 if (fits(orientation, i, j, coors)) {
+                    available[index]--;
                     insertIntoMap(s.shape_id, orientation, i, j, coors);
                 }
             }
@@ -91,8 +96,34 @@ public class Map {
     }
 
     private void insertIntoMap(int shape_id, Orientation orientation, int i, int j, int[] start) {
+        fileOutput += shape_id + "|";
+        //writeToFile(shape_id + "|");
+        //System.out.print(shape_id + "|");
+        String out = "";
         for (int[] coors : orientation.cells) {
             map[i + coors[0] - start[0]][j + coors[1] - start[1]] = shape_id;
+            out += (i + coors[0] - start[0]) + "," + (j + coors[1] - start[1]) + "|";
+        }
+        out = out.substring(0, out.length()-1);
+        //System.out.println(out);
+        //writeToFile(out + "\n");
+        fileOutput += out + "\n";
+    }
+
+    void printToFile(){
+        writeToFile(fileOutput);
+    }
+
+    private void writeToFile(String data){
+        try {
+            File file = new File(outputName);
+            FileWriter myWriter = new FileWriter(file, true);
+            myWriter.write(data);
+            myWriter.close();
+            //System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            //System.out.println("An error occurred.");
+            e.printStackTrace();
         }
     }
 
@@ -118,5 +149,14 @@ public class Map {
             }
         }
         return null;
+    }
+
+    public void print(){
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                System.out.print(map[i][j] + "\t");
+            }
+            System.out.println();
+        }
     }
 }
