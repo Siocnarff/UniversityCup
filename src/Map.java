@@ -1,5 +1,4 @@
 import com.google.gson.Gson;
-import com.sun.source.tree.Tree;
 import shapes.Orientation;
 import shapes.Shape;
 import shapes.Shapes;
@@ -78,11 +77,14 @@ public class Map {
                 }
                 for(int k = 0; k < shapeID.length; k++) {
                     if (available[k] != 0) {
-                        OptimalSolution candidate = insertOptimally(k, shapeID[k], i, j);
+                        OptimalSolution candidate = getOptimalCandidate(k, shapeID[k], i, j);
                         if(candidate.score > optimalSolution.score) {
-                            optimalSolution = candidate;
+                                optimalSolution = candidate;
                         }
                     }
+                }
+                if(optimalSolution.score == -1) {
+                    return;
                 }
                 insertIntoMap(optimalSolution.id, optimalSolution.orientation, i, j, optimalSolution.coors);
                 available[optimalSolution.index]--;
@@ -91,7 +93,7 @@ public class Map {
     }
 
 
-    private OptimalSolution insertOptimally(int index, int id, int i, int j) {
+    private OptimalSolution getOptimalCandidate(int index, int id, int i, int j) {
         int[] maxCoors = new int[2];
         double max = 0;
         Orientation maxOr = null;
@@ -112,7 +114,7 @@ public class Map {
         //insertIntoMap(s.shape_id, maxOr, i, j, maxCoors);
     }
 
-    private class OptimalSolution {
+    private static class OptimalSolution {
         public double score;
         public int index;
         public int id;
