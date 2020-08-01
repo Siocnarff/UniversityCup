@@ -13,5 +13,6 @@ public class Main {
         System.out.println(json);
         Shapes shapes = new Gson().fromJson(json, Shapes.class);
         System.out.println(shapes.shapes[0].shape_id);
+        Map map = new Map("grid_1.txt");
     }
 }
