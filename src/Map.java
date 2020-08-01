@@ -70,6 +70,7 @@ public class Map {
     }
 
     public void insertShapes() {
+        OptimalSolution optimalSolution = new OptimalSolution();
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 if (map[i][i] != 0) {
@@ -77,23 +78,82 @@ public class Map {
                 }
                 for(int k = 0; k < shapeID.length; k++) {
                     if (available[k] != 0) {
-                        insertOptimally(k, shapeID[k], i, j);
+                        OptimalSolution candidate = insertOptimally(k, shapeID[k], i, j);
+                        if(candidate.score > optimalSolution.score) {
+                            optimalSolution = candidate;
+                        }
                     }
                 }
+                insertIntoMap(optimalSolution.id, optimalSolution.orientation, i, j, optimalSolution.coors);
+                available[optimalSolution.index]--;
             }
         }
     }
 
-    private void insertOptimally(int index, int id, int i, int j) {
+
+    private OptimalSolution insertOptimally(int index, int id, int i, int j) {
+        int[] maxCoors = new int[2];
+        double max = 0;
+        Orientation maxOr = null;
         Shape s = getShape(id);
         for (Orientation orientation : s.orientations) {
             for (int[] coors : orientation.cells) {
                 if (fits(orientation, i, j, coors)) {
-                    available[index]--;
-                    insertIntoMap(s.shape_id, orientation, i, j, coors);
+                    double score = calcScore(s.shape_id, orientation, i, j, coors);
+                    if(max < score) {
+                        max = score;
+                        maxCoors = coors;
+                        maxOr = orientation;
+                    }
                 }
             }
         }
+        return new OptimalSolution(max, index, s.shape_id, maxOr, maxCoors);
+        //insertIntoMap(s.shape_id, maxOr, i, j, maxCoors);
+    }
+
+    private class OptimalSolution {
+        public double score;
+        public int index;
+        public int id;
+        public Orientation orientation;
+        public int[] coors;
+        OptimalSolution(double score, int index, int id, Orientation orientation, int[] coors) {
+            this.score = score;
+            this.index = index;
+            this.id = id;
+            this.orientation = orientation;
+            this.coors = coors;
+        }
+        OptimalSolution() {
+            this.score = -1;
+            this.id = 0;
+            this.index = -1;
+            this.orientation = null;
+            this.coors = new int[2];
+        }
+
+    }
+
+    private double calcScore(int id, Orientation orientation, int i, int j, int[] start) {
+        double totalSides = 0;
+        for(int[] coors: orientation.cells) {
+            int x = i + coors[0] - start[0];
+            int y = j + coors[1] - start[1];
+            if(x + 1 >= numRows || map[x + 1][y] != 0) {
+                totalSides++;
+            }
+            if(x - 1 < 0 || map[x - 1][y] != 0) {
+                totalSides++;
+            }
+            if(y + 1 >= numCols || map[x][y + 1] != 0) {
+                totalSides++;
+            }
+            if(y - 1 < 0 || map[x][y - 1] != 0) {
+                totalSides++;
+            }
+        }
+        return totalSides/numSides[id];
     }
 
     private void insertIntoMap(int shape_id, Orientation orientation, int i, int j, int[] start) {
