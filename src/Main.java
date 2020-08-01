@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class Main {
     public static void main(String[] args) {
-        Map map = new Map("grid_3.txt");
+        Map map = new Map("grid_2.txt");
         map.insertShapes();
         //map.print();
     }
