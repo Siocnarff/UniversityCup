@@ -3,8 +3,8 @@ package shapes;
 
 import com.google.gson.Gson;
 
+import java.util.Vector;
+
 public class Shapes {
-    Gson gson = new Gson();
-
-
+    public Shape[] shapes;
 }

@@ -1,11 +1,10 @@
 package shapes;
 
 public class Shape {
-    /*public final int shape_id;
-    private final int bounding_box;
-    private final int capacity;
-    private final*/
+    public int shape_id;
+    private int bounding_box;
+    private int capacity;
+    private Orientation[] orientations;
     Shape() {
-
     }
 }
