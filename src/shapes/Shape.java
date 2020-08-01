@@ -1,7 +1,10 @@
 package shapes;
 
 public class Shape {
-    private int id;
+    /*public final int shape_id;
+    private final int bounding_box;
+    private final int capacity;
+    private final*/
     Shape() {
 
     }
