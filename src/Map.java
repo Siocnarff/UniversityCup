@@ -72,7 +72,7 @@ public class Map {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 OptimalSolution optimalSolution = new OptimalSolution();
-                if (map[i][i] != 0) {
+                if (map[i][j] != 0) {
                     continue;
                 }
                 for(int k = 0; k < shapeID.length; k++) {
@@ -84,6 +84,7 @@ public class Map {
                     }
                 }
                 if(optimalSolution.score != -1) {
+                    //System.out.println("ID = " + optimalSolution.id);
                     insertIntoMap(optimalSolution.id, optimalSolution.orientation, i, j, optimalSolution.coors);
                     available[optimalSolution.index]--;
                 }
@@ -140,6 +141,7 @@ public class Map {
     }
 
     private double calcScore(int id, Orientation orientation, int i, int j, int[] start) {
+        //System.out.println("Calcscore");
         double totalSides = 0;
         for(int[] coors: orientation.cells) {
             int x = i + coors[0] - start[0];
@@ -157,6 +159,7 @@ public class Map {
                 totalSides++;
             }
         }
+
         return totalSides/numSides[id];
     }
 
